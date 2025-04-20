@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'db')}">
+
+<body>
+
+
+<div class="container">
+<form action="/submit" method="post">
+  <label for="user_string">Enter something:</label>
+  <input type="text" name="user_string" id="user_string" />
+  <button type="submit">Submit</button>
+</form>
+
+</div>
+
+</body>
+</html>

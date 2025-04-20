@@ -24,7 +24,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -52,6 +54,25 @@ public class HerokuApplication {
   @RequestMapping("/")
   String index() {
     return "index";
+  }
+  
+  @RequestMapping("/dbinput")
+  String userInput(Map<String,Object> model) {
+    return "dbinput";
+  }
+
+  @PostMapping("/submit")
+  String dbinput(@RequestParam String user_string, Map<String,Object> model) {
+    try (Connection connection = dataSource.getConnection()) {
+      Statement stmt = connection.createStatement();
+      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS table_timestamp_and_random_string (tick timestamp, random_string varchar(30))");
+      stmt.executeUpdate("INSERT INTO table_timestamp_and_random_string VALUES (now(), '" + user_string + "')");
+
+      return "redirect:/db";
+    } catch (Exception e) {
+      model.put("message", e.getMessage());
+      return "error";
+    }
   }
 
     @RequestMapping("/db")
